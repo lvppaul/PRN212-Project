@@ -10,7 +10,7 @@ namespace ProjectGroup
     {
         public string GetEndpoint()
         {
-            string Endpoint = "https://localhost:7228/api";
+            string Endpoint = "https://localhost:7062/api";
             return Endpoint;
         }
     }

@@ -1,0 +1,49 @@
+﻿<Window x:Class="ProjectGroup.EditKoiWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ProjectGroup"
+        mc:Ignorable="d"
+        Title="EditKoiWindow" Height="550" Width="400"
+        WindowStartupLocation="CenterScreen"
+        >
+    <Grid>
+        <StackPanel Margin="10">
+            <TextBlock Text="Name:" />
+            <TextBox Name="txtName" Margin="0,5" />
+
+            <TextBlock Text="Sex:" />
+            <ComboBox Name="cmbSex" Margin="0,5">
+                <ComboBoxItem>Male</ComboBoxItem>
+                <ComboBoxItem>Female</ComboBoxItem>
+            </ComboBox>
+
+            <TextBlock Text="Variety:" />
+            <TextBox Name="txtVariety" Margin="0,5" />
+
+            <TextBlock Text="Physique:" />
+            <TextBox Name="txtPhysique" Margin="0,5" />
+
+            <TextBlock Text="Note:" />
+            <TextBox Name="txtNote" Margin="0,5" />
+
+            <TextBlock Text="Origin:" />
+            <TextBox Name="txtOrigin" Margin="0,5" />
+
+            <TextBlock Text="Length:" />
+            <TextBox Name="txtLength" Margin="0,5" />
+
+            <TextBlock Text="Weight:" />
+            <TextBox Name="txtWeight" Margin="0,5" />
+
+            <TextBlock Text="Color:" />
+            <TextBox Name="txtColor" Margin="0,5" />
+
+            <TextBlock Text="Status:" />
+            <CheckBox Name="chkStatus" Margin="0,5" />
+
+            <Button Content="Save" Name="btnSave" Width="80" Height="30" HorizontalAlignment="Right" Margin="10" Click="btnSave_Click" />
+        </StackPanel>
+    </Grid>
+</Window>

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -21,6 +22,8 @@ namespace ProjectGroup
     public partial class LoginWindow : Window
     {
         private ApiEndpoint endpoint = new();
+        public static string userId { get; set; }
+
         public LoginWindow()
         {
             InitializeComponent();
@@ -35,6 +38,10 @@ namespace ProjectGroup
                 Email = username,
                 Password = password
             };
+            var requestContent = new MultipartFormDataContent();
+
+            requestContent.Add(new StringContent(UsernameTextBox.Text), "Email");
+            requestContent.Add(new StringContent(PasswordBox.Password), "Password");
             string apiUrl = endpoint.GetEndpoint();
 
 
@@ -42,14 +49,15 @@ namespace ProjectGroup
             {
                 try
                 {
-                    var response = await client.PostAsJsonAsync($"{apiUrl}/user/login", loginData);
+                    var response = await client.PostAsync("https://localhost:7062/api/Account/SignIn", requestContent);
 
                     if (response.IsSuccessStatusCode)
                     {
                         string content = await response.Content.ReadAsStringAsync();
-
-                        if (content.Contains("token"))
+                        if (content.Contains("userId"))
                         {
+                            var jsonObj = JObject.Parse(content);
+                            userId = jsonObj["userId"]?.ToString();
                             MessageBox.Show("Login successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                         }
                         else if (content.Contains("Invalid username or password"))
@@ -72,6 +80,35 @@ namespace ProjectGroup
                 }
             }
 
+        }
+
+        private void Window_DpiChanged(object sender, DpiChangedEventArgs e)
+        {
+
+        }
+
+        private void UsernameTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(UsernameTextBox.Text))
+            {
+                textEmail.Visibility = Visibility.Collapsed; 
+            }
+            else
+            {
+                textEmail.Visibility = Visibility.Visible; 
+            }
+          
+        }
+        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(PasswordBox.Password))
+            {
+                textPassword.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                textPassword.Visibility = Visibility.Visible;
+            }
         }
     }
 }

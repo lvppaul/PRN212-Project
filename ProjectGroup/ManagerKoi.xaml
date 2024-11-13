@@ -3,12 +3,25 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:ProjectGroup"
         mc:Ignorable="d"
-        Title="ManagerKoi" Height="450" Width="800">
+        Title="ManagerKoi" Height="450" Width="800"
+        >
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <materialDesign:BundledTheme BaseTheme="Dark" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
     <Grid>
-        <Rectangle Stroke="Black" Margin="34,30,592,217"/>
-        <Image HorizontalAlignment="Left" Height="100" Margin="66,45,0,0" VerticalAlignment="Top" Width="100"/>
-        
+       
+        <DataGrid x:Name="dataGrid" Margin="153,160,34,38">
+            <DataGrid.Columns  >
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
+                <DataGridTextColumn Header="Age" Binding="{Binding Age}" />
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </Window>

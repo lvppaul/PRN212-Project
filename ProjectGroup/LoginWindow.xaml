@@ -5,18 +5,72 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ProjectGroup"
         mc:Ignorable="d"
-        Title="LoginWindow" Height="450" Width="800" WindowStartupLocation="CenterScreen" >
+        Title="LoginWindow" Height="450" Width="800" WindowStartupLocation="CenterScreen" 
+    >
     <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="pack://application:,,,/Images/Group 19.png" />
+        </Grid.Background>
         <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Border BorderBrush="#FFB4B4B4" BorderThickness="1" Padding="20" CornerRadius="10" Background="White">
-                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" >
-                    <TextBlock Text="Login" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" />
-                    <TextBox  Name="UsernameTextBox" Width="250" Height="35"  Margin="0,0,0,10" />
-                    <PasswordBox Name="PasswordBox" Width="250" Height="35"  Margin="0,0,0,10" />
-                    <Button x:Name="btnLogin" Content="Login" Width="250" Height="40" HorizontalAlignment="Center" Click="LoginButton_Click" Background="#4CAF50" Foreground="White" BorderBrush="Green" BorderThickness="1" Cursor="Hand" FontWeight="Bold" />
-                    <TextBlock  Text="Don't have an account? Register here" Foreground="Blue" HorizontalAlignment="Center" Cursor="Hand" Margin="10,0,0,0" />
-                </StackPanel>
-            </Border>
+            <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left" Margin="421,-12,0,0" >
+                <TextBlock Text="Login" Foreground="White" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" />
+                <TextBox  CaretBrush="#FFF6EFEF"  VerticalContentAlignment="Center" 
+  Name="UsernameTextBox" Width="250" Height="35"  Margin="0,0,0,10" TextChanged="UsernameTextBox_TextChanged" Foreground="White" >
+
+                    <TextBox.Template>
+                        <ControlTemplate TargetType="TextBox">
+                            <Grid>
+                                <Border BorderBrush="Gray" BorderThickness="0,0,0,1">
+                                </Border>
+
+                                <Border BorderBrush="Gray" BorderThickness="0,0,0,1" VerticalAlignment="Bottom">
+                                    <ScrollViewer x:Name="PART_ContentHost" />
+                                </Border>
+                            </Grid>
+                        </ControlTemplate>
+                    </TextBox.Template>
+                </TextBox>
+                <PasswordBox CaretBrush="#FFF6EFEF" Name="PasswordBox"
+             PasswordChanged="PasswordBox_PasswordChanged"
+             VerticalContentAlignment="Center"
+             Width="250" Height="40"
+             Margin="0,0,0,10" Foreground="#FFF3EEEE">
+                    <PasswordBox.Template>
+                        <ControlTemplate TargetType="PasswordBox">
+                            <Grid>
+                                <Border BorderBrush="Gray" BorderThickness="0,0,0,1">
+                                </Border>
+
+                                <Border BorderBrush="Gray" BorderThickness="0,0,0,1" VerticalAlignment="Bottom">
+                                    <ScrollViewer x:Name="PART_ContentHost" />
+                                </Border>
+                            </Grid>
+                        </ControlTemplate>
+                    </PasswordBox.Template>
+                </PasswordBox>
+
+                <Button 
+            x:Name="btnLogin" 
+            Content="Login" 
+            Width="250" 
+            Height="40" 
+            HorizontalAlignment="Center" 
+            Click="LoginButton_Click" 
+            BorderThickness="1" 
+            Cursor="Hand" 
+            FontWeight="Bold" BorderBrush="#FFDF1717" Background="White" >
+                    <Button.Foreground>
+                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                            <GradientStop Color="Black"/>
+                            <GradientStop Color="Black" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Button.Foreground>
+                </Button>
+                <TextBlock  Text="Don't have an account? Register here" Foreground="Blue" HorizontalAlignment="Center" Cursor="Hand" Margin="10,0,0,0" />
+            </StackPanel>
+            <Label x:Name="textPassword" Content="Password" Foreground="White" HorizontalAlignment="Left" Margin="416,83,0,0" VerticalAlignment="Top" Opacity="0.3"/>
+
+            <Label x:Name="textEmail" Content="Email" Foreground="#FFF9F9F9" HorizontalAlignment="Left" Margin="416,33,0,0" VerticalAlignment="Top" Opacity="0.31"/>
         </Grid>
     </Grid>
 </Window>
