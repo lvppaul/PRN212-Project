@@ -82,87 +82,7 @@ namespace Domain.Repositories
 
         //    return token;
         //}
-        public async Task<AuthenticationResponse> GmailSignIn(TokenRequest firebaseToken)
-        {
-            try
-            {
-                // Verify the Firebase token
-                FirebaseToken decodedToken = await FirebaseAuth.DefaultInstance
-                    .VerifyIdTokenAsync(firebaseToken.Token);
-                string uid = decodedToken.Uid;
-                string email = decodedToken.Claims["email"].ToString();
-                string name = decodedToken.Claims["name"].ToString();
-                string picture = decodedToken.Claims["picture"].ToString();
-                //int indexLastName = name.LastIndexOf(" ");
-                //string LastName = name.Substring(indexLastName + 1);
-                //string FirstName = name.Substring(0, indexLastName);
-                // Kiểm tra nếu tên chỉ có FirstName
-                int indexLastName = name.LastIndexOf(" ");
-                string LastName = "";
-                string FirstName = name;
-
-                if (indexLastName != -1)
-                {
-                    // Nếu có họ và tên
-                    LastName = name.Substring(indexLastName + 1);
-                    FirstName = name.Substring(0, indexLastName);
-                }
-
-                // Check if the user exists in your database
-                var user = await _userManager.FindByEmailAsync(email);
-                if (user == null)
-                {
-                    // Create a new user if they don't exist
-                    user = new ApplicationUser
-                    {
-                        UserName = email,
-                        Email = email,
-                        LastName = LastName,
-                        FirstName = FirstName,
-                        EmailConfirmed = true,
-                    };
-                    var result = await _userManager.CreateAsync(user);
-                    if (!result.Succeeded)
-                    {
-                        return new AuthenticationResponse { Message = failCreateUser };
-                    }
-                    if (!await _roleManager.RoleExistsAsync(AppRole.Member))
-                    {
-                        await _roleManager.CreateAsync(new IdentityRole(AppRole.Member));
-                    }
-                    await _userManager.AddToRoleAsync(user, AppRole.Member);
-                }
-                var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Email, email),
-                new Claim("Avatar",picture),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString())
-            };
-
-                var userRoles = await _userManager.GetRolesAsync(user);
-                foreach (var role in userRoles)
-                {
-                    claims.Add(new Claim(ClaimTypes.Role, role.ToString()));
-                }
-
-                await _userManager.SetLockoutEnabledAsync(user, false);
-                // Generate your own JWT token
-                var token = GenerateJwtToken(claims);
-                string refreshToken = GenerateRefreshToken();
-
-                // Lưu Refresh Token vào bảng User
-                user.RefreshToken = refreshToken;
-                user.RefreshTokenExpiration = DateTime.Now.AddDays(7); // Ví dụ: refresh token có hạn 7 ngày
-                await _userManager.UpdateAsync(user);
-
-                return new AuthenticationResponse { AccessToken = token, RefreshToken = refreshToken };
-            }
-            catch (FirebaseAuthException ex)
-            {
-                return new AuthenticationResponse { Message = GmailLoginFail }; ;
-            }
-        }
+       
 
         public async Task<AuthenticationResponse> SignInAsync(SignInModel model)
         {
@@ -204,7 +124,7 @@ namespace Domain.Repositories
             user.RefreshTokenExpiration = DateTime.Now.AddDays(7); // Ví dụ: refresh token có hạn 7 ngày
             await _userManager.UpdateAsync(user);
 
-            return new AuthenticationResponse { AccessToken = token, RefreshToken = refreshToken };
+            return new AuthenticationResponse { UserId = user.Id };
         }
 
         // GenerateRefreshToken
@@ -266,7 +186,7 @@ namespace Domain.Repositories
             user.RefreshTokenExpiration = DateTime.Now.AddDays(7); // Refresh token mới có hạn 7 ngày
             await _userManager.UpdateAsync(user);
            
-            return new AuthenticationResponse { AccessToken = newAccessToken, RefreshToken = newRefreshToken };
+            return null;
         }
 
 
@@ -790,7 +710,12 @@ namespace Domain.Repositories
             return count;
         }
 
-     
+        public Task<AuthenticationResponse> GmailSignIn(TokenRequest firebaseToken)
+        {
+            throw new NotImplementedException();
+        }
+
+
 
 
 

@@ -26,13 +26,13 @@ namespace ApiService.Controllers
         }
 
         [HttpPost("SignIn")]
-        public async Task<IActionResult> SignIn(SignInModel model)
+        public async Task<IActionResult> SignIn( [FromForm] SignInModel model)
         {
             var result = await _accountRepository.SignInAsync(model);
             if (!result.Message.IsNullOrEmpty()) return BadRequest(result);
             return Ok(result);
         }
-
+         
         [HttpPost]
         [Route("refresh-token")]
         public async Task<IActionResult> RefreshTokenAsync([FromBody] string refreshToken)

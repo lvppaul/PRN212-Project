@@ -20,5 +20,10 @@ namespace Project_KoiCareSystemAtHome
         {
             InitializeComponent();
         }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            txtUserId.Text = Login.userId;
+        }
     }
 }
