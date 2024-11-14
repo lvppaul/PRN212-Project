@@ -136,6 +136,7 @@ namespace ProjectGroup
         {
             LoadKoiAsync();
             LoadPondAsync();
+            LoadPond();
             dataGridKoi.Visibility = Visibility.Visible;
             dataGridPond.Visibility = Visibility.Collapsed;
         }
@@ -412,6 +413,229 @@ namespace ProjectGroup
             else
             {
                 MessageBox.Show("Action cancelled.", "Cancelled", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+        private async void LoadPond()
+        {
+
+            using (var client = new HttpClient())
+            {
+                try
+                {
+                    var response = await client.GetAsync($"https://localhost:7062/api/Pond/GetPondsByUserId/{userId}");
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string content = await response.Content.ReadAsStringAsync();
+                        var pondsList = JsonConvert.DeserializeObject<List<PondDtosResponse>>(content);
+                        cbxPondName.ItemsSource = pondsList;
+                        cbxPondName.DisplayMemberPath = "Name";
+                        cbxPondName.SelectedValuePath = "PondId";
+                        cbxPondNameFood.ItemsSource = pondsList;
+                        cbxPondNameFood.DisplayMemberPath = "Name";
+                        cbxPondNameFood.SelectedValuePath = "PondId";
+                    }
+                    else
+                    {
+                        string errorContent = await response.Content.ReadAsStringAsync();
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error: {ex.Message}", "Exception", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+        private void btnSaltCaculate_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            dataGridKoi.Visibility = Visibility.Collapsed;
+            dataGridPond.Visibility = Visibility.Collapsed;
+        }
+
+        private async  void btnCaculateSalt_Click(object sender, RoutedEventArgs e)
+        {
+            if (String.IsNullOrEmpty(txtCurrent.Text) ||
+                String.IsNullOrEmpty(txtDesired.Text) ||
+                String.IsNullOrEmpty(txtWaterPercent.Text) ||
+                cbxPondName.SelectedValue ==null
+                )
+            {
+                MessageBox.Show("All field is required","Validation",MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            if (ckbDecrease == null && ckbIncrease == null) { 
+                MessageBox.Show("Please choose a method increase or decrease","Error",MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            DecisionDtoRequest decisionDtoRequest = new DecisionDtoRequest();
+            if (int.TryParse(cbxPondName.SelectedValue.ToString(), out int pondId))
+            {
+                decisionDtoRequest.PondId = pondId;
+            }
+            else
+            {
+                MessageBox.Show("Invalid Pond selection", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            if (float.TryParse(txtDesired.Text, out float desiredConcentration))
+            {
+                decisionDtoRequest.DesiredConcentration = desiredConcentration;
+            }
+            else
+            {
+                MessageBox.Show("Please enter a valid Desired Concentration", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(txtCurrent.Text) && float.TryParse(txtCurrent.Text, out float currentConcentration))
+            {
+                decisionDtoRequest.CurrentConcentration = currentConcentration;
+            }
+            else
+            {
+                decisionDtoRequest.CurrentConcentration = null; 
+            }
+
+            if (int.TryParse(txtWaterPercent.Text, out int percentWaterChange))
+            {
+                decisionDtoRequest.PercentWaterChange = percentWaterChange;
+            }
+            else
+            {
+                MessageBox.Show("Please enter a valid percentage for water change", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            string apiUrl = string.Empty;
+            if (ckbIncrease.IsChecked == true && ckbDecrease.IsChecked == false)
+            {
+                apiUrl = "https://localhost:7062/api/SaltCalculate/increase-concentration";
+            }
+            else if (ckbDecrease.IsChecked == true && ckbIncrease.IsChecked == false)
+            {
+                apiUrl = "https://localhost:7062/api/SaltCalculate/decrease-concentration";
+            }
+            else
+            {
+                MessageBox.Show("Please select either Increase or Decrease method", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            string json = JsonConvert.SerializeObject(decisionDtoRequest);
+            var requestContent = new StringContent(json, Encoding.UTF8, "application/json");
+            using (var client = new HttpClient())
+            {
+                try
+                {
+                    var response = await client.PostAsync(apiUrl, requestContent);
+
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string content = await response.Content.ReadAsStringAsync();
+                        var result = JsonConvert.DeserializeObject<SaltCalculationResult>(content);
+                        MessageBox.Show($"Amount of salt: {result.AmountOfSalt} \n" + 
+                            $"Amount of Saft Refill: {result.AmountOfSaltRefill?.ToString() ?? " No need refill"} \n" +
+                            $"Number of Changess: {result.NumberOfChanges?.ToString() ?? " No changes"} \n",
+                            "Calculation Successful", MessageBoxButton.OK, MessageBoxImage.Information
+                            );
+                    }
+                    else
+                    {
+                        string errorContent = await response.Content.ReadAsStringAsync();
+                        MessageBox.Show($"Error: {errorContent}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error: {ex.Message}", "Exception", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+
+        }
+
+        public async Task<double> CaculateFishWithWeight(int pondid)
+        {
+
+            double totalWeight = 0;
+            using (var client = new HttpClient())
+            {
+                try
+                {
+                    var response = await client.GetAsync($"https://localhost:7062/api/Pond/ListKoiInPond/{pondid}");
+
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string content = await response.Content.ReadAsStringAsync();
+                        var koisList = JsonConvert.DeserializeObject<List<KoiDtosResponse>>(content);
+                        if (koisList != null && koisList.Count > 0)
+                        {
+                            totalWeight = koisList.Sum(koi => koi.Weight/1000);  
+                           return totalWeight;
+                        }
+                        else
+                        {
+                            MessageBox.Show("No koi found in the pond.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            return 0;
+                        }
+                    }
+                    else
+                    {
+                        string errorContent = await response.Content.ReadAsStringAsync();
+                        MessageBox.Show($"Error: {errorContent}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error: {ex.Message}", "Exception", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            return totalWeight;
+        }
+
+        private void ckbIncrease_Checked(object sender, RoutedEventArgs e)
+        {
+            ckbDecrease.IsChecked = false;  
+
+        }
+
+        private void ckbDecrease_Checked(object sender, RoutedEventArgs e)
+        {
+            ckbIncrease.IsChecked = false;
+        }
+
+        private async void btnCaculateFood_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var totalWeight = await CaculateFishWithWeight(int.Parse(cbxPondNameFood.SelectedValue.ToString()));
+
+                if (totalWeight <= 0)
+                {
+                    MessageBox.Show("No koi found in this pond", "Validate", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(txtFoodRate.Text) || !float.TryParse(txtFoodRate.Text, out float foodRate))
+                {
+                    MessageBox.Show("Please enter a valid food rate", "Validate", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                var totalFood = Math.Round(totalWeight * foodRate, 2);
+
+                MessageBox.Show($"The total amount of food required: {totalFood} kg",
+                                "Calculation Result",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

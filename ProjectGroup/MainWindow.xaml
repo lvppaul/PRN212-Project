@@ -170,6 +170,9 @@
                                 Stretch="Fill"/>
 
                 </Grid.Background>
+                <Rectangle HorizontalAlignment="Left" Height="203" Margin="197,10,0,0" Stroke="#FFF0E5E5" VerticalAlignment="Top" Width="347"/>
+                <Rectangle HorizontalAlignment="Left" Height="312" Margin="202,232,0,0" Stroke="#FFF6EFEF" VerticalAlignment="Top" Width="1288"/>
+                <Rectangle HorizontalAlignment="Left" Height="158" Margin="544,55,0,0" Stroke="#FFF4F1F1" VerticalAlignment="Top" Width="272"/>
 
             </Grid>
 
@@ -438,7 +441,7 @@
 
                                 <TextBlock Text="Salt"
                                            Margin="62,0,0,0"
-                                           Style="{StaticResource font_style}"/>
+                                           Style="{StaticResource font_style}" MouseLeftButtonDown="btnSaltCaculate_MouseLeftButtonDown"/>
 
                             </StackPanel>
 
@@ -648,7 +651,7 @@
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
-        <Button x:Name="btnCreate" Content="Create New Koi" HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" Height="50" Margin="200,207,0,0" Click="btnCreate_Click">
+        <Button x:Name="btnCreate" Content="Create New Koi" HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" Height="50" Margin="214,242,0,0" Click="btnCreate_Click">
             <Button.Template>
                 <ControlTemplate TargetType="Button">
                     <Border Background="#FFF1F1F1" BorderBrush="#388E3C" BorderThickness="1" CornerRadius="10">
@@ -659,8 +662,8 @@
                     </Border>
                 </ControlTemplate>
             </Button.Template>
-        </Button>                                                                                                                                                      
-        <Button x:Name="btnCreatePond" Content="Create New Pond" HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" Height="50" Margin="450,207,0,0" Click="btnCreatePond_Click" >
+        </Button>
+        <Button x:Name="btnCreatePond" Content="Create New Pond" HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" Height="50" Margin="414,242,0,0" Click="btnCreatePond_Click" >
             <Button.Template>
                 <ControlTemplate TargetType="Button">
                     <Border Background="#FFF1F1F1" BorderBrush="#388E3C" BorderThickness="1" CornerRadius="10">
@@ -672,6 +675,51 @@
                 </ControlTemplate>
             </Button.Template>
         </Button>
+        <TextBlock  HorizontalAlignment="Left" Margin="238,29,0,0" TextWrapping="Wrap" Text="Pond Name" VerticalAlignment="Top" Foreground="#FFF3E6E6" RenderTransformOrigin="1.509,0.917"/>
+        <ComboBox x:Name="cbxPondName" HorizontalAlignment="Left" Margin="374,29,0,0" VerticalAlignment="Top" Width="138" RenderTransformOrigin="0.835,0.721"/>
 
+        <TextBlock  HorizontalAlignment="Left" Margin="238,82,0,0" TextWrapping="Wrap" Text="Desired Concentration" VerticalAlignment="Top" Foreground="White"/>
+        <TextBox x:Name="txtDesired" HorizontalAlignment="Left" Margin="374,82,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="136" RenderTransformOrigin="-0.658,0.888"/>
+
+        <TextBlock  HorizontalAlignment="Left" Margin="238,115,0,0" TextWrapping="Wrap" Text="Current Concentration" VerticalAlignment="Top" Foreground="#FFF6F3F3"/>
+        <TextBox x:Name="txtCurrent" HorizontalAlignment="Left" Margin="376,115,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="136"/>
+
+        <TextBlock  HorizontalAlignment="Left" Margin="238,153,0,0" TextWrapping="Wrap" Text="Percent WaterChange" VerticalAlignment="Top" Foreground="#FFE8D7D7"/>
+        <TextBox x:Name="txtWaterPercent" HorizontalAlignment="Left" Margin="376,153,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="136"/>
+
+        <CheckBox x:Name="ckbIncrease" Content="Increase" HorizontalAlignment="Left" Margin="374,56,0,0" VerticalAlignment="Top" Foreground="#FFF4DFDF" RenderTransformOrigin="0.121,0.738" Checked="ckbIncrease_Checked"/>
+
+        <CheckBox x:Name="ckbDecrease"  Content="Decrease" HorizontalAlignment="Left" Margin="444,56,0,0" VerticalAlignment="Top" Background="#FFF9F4F4" Foreground="#FFF7E4E4" Checked="ckbDecrease_Checked"/>
+
+
+        <Button x:Name="btnCaculateSalt" Content="Caculate Salt" HorizontalAlignment="Left" VerticalAlignment="Top" Width="144" Height="28" Margin="372,178,0,0" Click="btnCaculateSalt_Click"  >
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="#FFF1F1F1" BorderBrush="#388E3C" BorderThickness="1" CornerRadius="10">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <materialDesign:PackIcon Kind="Salt" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,10,0" Width="20" Height="20" Foreground="Black"/>
+                            <ContentPresenter Content="Caculate Salt" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
+        <TextBlock  HorizontalAlignment="Left" Margin="578,115,0,0" TextWrapping="Wrap" Text="Pond Name" VerticalAlignment="Top" Foreground="#FFF3E6E6" RenderTransformOrigin="1.509,0.917"/>
+        <ComboBox x:Name="cbxPondNameFood" HorizontalAlignment="Left" Margin="659,112,0,0" VerticalAlignment="Top" Width="138" RenderTransformOrigin="0.835,0.721"/>
+        <TextBlock  HorizontalAlignment="Left" Margin="578,149,0,0" TextWrapping="Wrap" Text="Feeding Rate" VerticalAlignment="Top" Foreground="#FFF3E6E6" RenderTransformOrigin="1.509,0.917"/>
+        <TextBox x:Name="txtFoodRate" HorizontalAlignment="Left" Margin="659,149,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="136"/>
+        <Button x:Name="btnCaculateFood" Content="Caculate Salt" HorizontalAlignment="Left" VerticalAlignment="Top" Width="146" Height="28" Margin="654,178,0,0" Click="btnCaculateFood_Click"  >
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="#FFF1F1F1" BorderBrush="#388E3C" BorderThickness="1" CornerRadius="10">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <materialDesign:PackIcon Kind="FishFood" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,10,0" Width="20" Height="20" Foreground="Black"/>
+                            <ContentPresenter Content="Caculate Food" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
+        <TextBlock  HorizontalAlignment="Left" Margin="608,58,0,0" TextWrapping="Wrap" Text="Food Calculate" VerticalAlignment="Top" Foreground="#FFF3E6E6" RenderTransformOrigin="1.509,0.917" Width="148" FontSize="22"/>
     </Grid>
 </Window>
