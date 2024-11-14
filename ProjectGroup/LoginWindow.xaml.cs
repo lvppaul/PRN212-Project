@@ -38,6 +38,10 @@ namespace ProjectGroup
                 Email = username,
                 Password = password
             };
+            string json = JsonConvert.SerializeObject(loginData);
+            var requestContent1 = new StringContent(json, Encoding.UTF8, "application/json");
+
+
             var requestContent = new MultipartFormDataContent();
 
             requestContent.Add(new StringContent(UsernameTextBox.Text), "Email");
@@ -46,7 +50,7 @@ namespace ProjectGroup
 
 
             using (var client = new HttpClient())
-            {
+            {   
                 try
                 {
                     var response = await client.PostAsync("https://localhost:7062/api/Account/SignIn", requestContent);
@@ -58,7 +62,9 @@ namespace ProjectGroup
                         {
                             var jsonObj = JObject.Parse(content);
                             userId = jsonObj["userId"]?.ToString();
+                            MainWindow mainWindow = new MainWindow(userId);
                             MessageBox.Show("Login successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                            mainWindow.Show();
                         }
                         else if (content.Contains("Invalid username or password"))
                         {
@@ -72,6 +78,11 @@ namespace ProjectGroup
                         {
                             MessageBox.Show("Invalid username or password.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                         }
+                    }
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        string errorContent = await response.Content.ReadAsStringAsync();
+                        MessageBox.Show($"Error: {errorContent}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
                 catch (Exception ex)

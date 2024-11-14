@@ -33,23 +33,20 @@ namespace ProjectGroup
             txtPhysique.Text = koi.Physique;
             txtNote.Text = koi.Note;
             txtOrigin.Text = koi.Origin;
-            txtLength.Text = koi.Length.ToString();
-            txtWeight.Text = koi.Weight.ToString();
+            txtAge.Text = koi.Age.ToString();
             txtColor.Text = koi.Color;
             chkStatus.IsChecked = koi.Status;
         }
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
+            UpdatedKoi.Age = Int32.Parse(txtAge.Text);
             UpdatedKoi.Name = txtName.Text;
-            UpdatedKoi.Sex = cmbSex.SelectedItem?.ToString();
+            UpdatedKoi.Sex = cmbSex.SelectedItem?.ToString() ?? "Unknown";
             UpdatedKoi.Variety = txtVariety.Text;
             UpdatedKoi.Physique = txtPhysique.Text;
             UpdatedKoi.Note = txtNote.Text;
             UpdatedKoi.Origin = txtOrigin.Text;
-
-            UpdatedKoi.Length = int.TryParse(txtLength.Text, out var length) ? length : 0;
-            UpdatedKoi.Weight = int.TryParse(txtWeight.Text, out var weight) ? weight : 0;
             UpdatedKoi.Color = txtColor.Text;
             UpdatedKoi.Status = chkStatus.IsChecked ?? false;
 
