@@ -124,7 +124,7 @@ namespace Domain.Repositories
             user.RefreshTokenExpiration = DateTime.Now.AddDays(7); // Ví dụ: refresh token có hạn 7 ngày
             await _userManager.UpdateAsync(user);
 
-            return new AuthenticationResponse { UserId = user.Id };
+            return new AuthenticationResponse { UserId = user.Id , Role = userRoles.ToString()};
         }
 
         // GenerateRefreshToken

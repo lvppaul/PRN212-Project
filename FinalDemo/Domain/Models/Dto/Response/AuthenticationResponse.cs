@@ -10,6 +10,7 @@ namespace Domain.Models.Dto.Response
     public class AuthenticationResponse
     {
         public  string UserId { get; set; }
+        public string Role {  get; set; }
         public string Message { get; set; } 
     }
 }
