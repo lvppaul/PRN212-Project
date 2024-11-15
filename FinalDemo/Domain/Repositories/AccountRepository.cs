@@ -108,9 +108,11 @@ namespace Domain.Repositories
     };
 
             var userRoles = await _userManager.GetRolesAsync(user);
+            string rolePRN = "";
             foreach (var role in userRoles)
             {
                 authClaims.Add(new Claim(ClaimTypes.Role, role.ToString()));
+                rolePRN = role.ToString();
             }
 
             // Tạo Access Token
@@ -124,7 +126,7 @@ namespace Domain.Repositories
             user.RefreshTokenExpiration = DateTime.Now.AddDays(7); // Ví dụ: refresh token có hạn 7 ngày
             await _userManager.UpdateAsync(user);
 
-            return new AuthenticationResponse { UserId = user.Id , Role = userRoles.ToString()};
+            return new AuthenticationResponse { UserId = user.Id , Role = rolePRN};
         }
 
         // GenerateRefreshToken
