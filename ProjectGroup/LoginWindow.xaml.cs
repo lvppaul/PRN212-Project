@@ -121,5 +121,12 @@ namespace ProjectGroup
                 textPassword.Visibility = Visibility.Visible;
             }
         }
+
+        private void tbRegister_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+
+            RegisterWindow registerWindow = new RegisterWindow();
+            registerWindow.ShowDialog();
+        }
     }
 }

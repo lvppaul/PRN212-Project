@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static MaterialDesignThemes.Wpf.Theme;
 
 namespace ProjectGroup
 {
@@ -21,7 +22,8 @@ namespace ProjectGroup
     public partial class MainWindow : Window
     {
         public static string userId { get; set; }
-
+         
+        public List<KoiDtosResponse> listKoiDtosResponses { get; set; }
         public MainWindow(string userId)
         {       
             InitializeComponent();
@@ -51,35 +53,35 @@ namespace ProjectGroup
             }
         }
         //Call api to Koi Reponse 
-        public async Task LoadKoiAsync()
-        {
-            using (var client = new HttpClient())
+            public async Task LoadKoiAsync()
             {
-                try
+                using (var client = new HttpClient())
                 {
-                    var response = await client.GetAsync($"https://localhost:7062/api/Koi/GetAllKoiByUserId?userid={userId}");
-
-                    if (response.IsSuccessStatusCode)
+                    try
                     {
-                        string content = await response.Content.ReadAsStringAsync();
-                        var koiList = JsonConvert.DeserializeObject<List<KoiDtosResponse>>(content);
-                       dataGridKoi.ItemsSource = koiList;
-                        dataGridKoi.Visibility = Visibility.Visible;
-                        dataGridPond.Visibility = Visibility.Collapsed;
+                        var response = await client.GetAsync($"https://localhost:7062/api/Koi/GetAllKoiByUserId?userid={userId}");
 
-                    }
-                    else
-                    {
-                        string errorContent = await response.Content.ReadAsStringAsync();
+                        if (response.IsSuccessStatusCode)
+                        {
+                            string content = await response.Content.ReadAsStringAsync();
+                            var koiList = JsonConvert.DeserializeObject<List<KoiDtosResponse>>(content);
+                        listKoiDtosResponses = koiList;
+                        dataGridKoi.ItemsSource = koiList;
+                            dataGridKoi.Visibility = Visibility.Visible;
+                            dataGridPond.Visibility = Visibility.Collapsed;
+                        }
+                        else
+                        {
+                            string errorContent = await response.Content.ReadAsStringAsync();
                       
+                        }
                     }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error: {ex.Message}", "Exception", MessageBoxButton.OK, MessageBoxImage.Error);
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error: {ex.Message}", "Exception", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
             }
-        }
 
         public async Task LoadPondAsync()
         {
@@ -144,7 +146,7 @@ namespace ProjectGroup
         private async void btnDelete_Click(object sender, RoutedEventArgs e)
         {
 
-            var button = sender as Button;
+            var button = sender as System.Windows.Controls.Button;
             if (button != null)
             {
                 var koiId = button.Tag as int?;
@@ -208,7 +210,7 @@ namespace ProjectGroup
 
         private async void btnUpdate_Click_1(object sender, RoutedEventArgs e)
         {
-            var button = sender as Button;
+            var button = sender as System.Windows.Controls.Button;
             if (button != null)
             {
                 var koiId = button.Tag as int?;
@@ -289,7 +291,7 @@ namespace ProjectGroup
 
         private async void btnDeletePond_Click(object sender, RoutedEventArgs e)
         {
-            var button = sender as Button;
+            var button = sender as System.Windows.Controls.Button;
             if (button != null)
             {
                 var pondId = button.Tag as int?;
@@ -337,7 +339,7 @@ namespace ProjectGroup
 
         private async void btnUpdatePond_Click(object sender, RoutedEventArgs e)
         {
-            var button = sender as Button;
+            var button = sender as System.Windows.Controls.Button;
             if (button != null)
             {
                 var pondId = button.Tag as int?;
@@ -434,6 +436,9 @@ namespace ProjectGroup
                         cbxPondNameFood.ItemsSource = pondsList;
                         cbxPondNameFood.DisplayMemberPath = "Name";
                         cbxPondNameFood.SelectedValuePath = "PondId";
+                        cbxPondNameWithKois.ItemsSource = pondsList;
+                        cbxPondNameWithKois.DisplayMemberPath = "Name";
+                        cbxPondNameWithKois.SelectedValuePath = "PondId";
                     }
                     else
                     {
@@ -597,6 +602,45 @@ namespace ProjectGroup
             return totalWeight;
         }
 
+        public async Task<int> FindKoisInPond(int pondid)
+        {
+            int totalKois = 0;
+            using (var client = new HttpClient())
+            {
+                try
+                {
+                    var response = await client.GetAsync($"https://localhost:7062/api/Pond/ListKoiInPond/{pondid}");
+
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string content = await response.Content.ReadAsStringAsync();
+                        var koisList = JsonConvert.DeserializeObject<List<KoiDtosResponse>>(content);
+                        if (koisList != null && koisList.Count > 0)
+                        {
+                           totalKois = koisList.Count;
+                        }
+                        else
+                        {
+                            MessageBox.Show("No koi found in the pond.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            return 0;
+                        }
+                    }
+                    else
+                    {
+                        string errorContent = await response.Content.ReadAsStringAsync();
+                        MessageBox.Show($"Error: {errorContent}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error: {ex.Message}", "Exception", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            return totalKois;
+        }
+
+
         private void ckbIncrease_Checked(object sender, RoutedEventArgs e)
         {
             ckbDecrease.IsChecked = false;  
@@ -630,6 +674,187 @@ namespace ProjectGroup
 
                 MessageBox.Show($"The total amount of food required: {totalFood} kg",
                                 "Calculation Result",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+        
+
+        private List<KoiDtosResponse> FilterKoi( List<KoiDtosResponse> koiList)
+        {
+            if (koiList == null) return new List<KoiDtosResponse>(); 
+
+            HashSet<string> selectedNames = new HashSet<string>();
+
+            if (ckbHotaru.IsChecked == true) selectedNames.Add("Hotaro");
+            if (ckbNero.IsChecked == true) selectedNames.Add("Neru");
+            if (ckbYama.IsChecked == true) selectedNames.Add("Yama");
+            if (ckbEitoku.IsChecked == true) selectedNames.Add("Eitoku");
+            if (ckbAnteiku.IsChecked == true) selectedNames.Add("Anteiku");
+            Console.WriteLine("Selected Names: " + string.Join(", ", selectedNames));
+            
+            var filteredList = koiList.Where(k => selectedNames.Contains(k.Name)).ToList();
+
+            if(selectedNames.Count == 0)
+            {
+                filteredList = koiList;
+            }
+            if(ckbAsc.IsChecked == true)
+            {
+                filteredList = filteredList.OrderBy(k => k.Age).ToList();
+            }
+            else if (ckbDesc.IsChecked == true)
+            {
+                filteredList = filteredList.OrderByDescending(k => k.Age).ToList();
+            }
+
+            if (ckbAscWeight.IsChecked == true) { 
+                filteredList = filteredList.OrderBy(k => k.Weight).ToList();
+            }
+            else if (ckbDescWeight.IsChecked == true)
+            {
+                filteredList = filteredList.OrderByDescending(k => k.Weight).ToList();
+            }
+            return filteredList;
+
+        }
+
+        private void UpdateListView(List<KoiDtosResponse> filteredList)
+        {
+            dataGridKoi.ItemsSource = filteredList;
+        }
+
+        private void ckbHotaru_Checked(object sender, RoutedEventArgs e)
+        {
+            var filteredList = FilterKoi(listKoiDtosResponses);
+            UpdateListView(filteredList);
+
+        }
+
+        private void ckbNero_Checked(object sender, RoutedEventArgs e)
+        {
+            var filteredList = FilterKoi(listKoiDtosResponses);
+            UpdateListView(filteredList);
+        }
+
+        private void ckbYama_Checked(object sender, RoutedEventArgs e)
+        {
+            var filteredList = FilterKoi(listKoiDtosResponses);
+            UpdateListView(filteredList);
+        }
+
+        private void ckbEitoku_Checked(object sender, RoutedEventArgs e)
+        {
+            var filteredList = FilterKoi(listKoiDtosResponses);
+            UpdateListView(filteredList);
+        }
+
+        private void ckbAnteiku_Checked(object sender, RoutedEventArgs e)
+        {
+            var filteredList = FilterKoi(listKoiDtosResponses);
+            UpdateListView(filteredList);
+        }
+
+        private void ckbHotaru_UnChecked(object sender, RoutedEventArgs e)
+        {
+            var filteredList = FilterKoi(listKoiDtosResponses);
+            UpdateListView(filteredList);
+        }
+
+        private void ckbNero_UnChecked(object sender, RoutedEventArgs e)
+        {
+            var filteredList = FilterKoi(listKoiDtosResponses);
+            UpdateListView(filteredList);
+        }
+
+        private void ckbYama_UnChecked(object sender, RoutedEventArgs e)
+        {
+            var filteredList = FilterKoi(listKoiDtosResponses);
+            UpdateListView(filteredList);
+        }
+
+        private void ckbEitoku_UnChecked(object sender, RoutedEventArgs e)
+        {
+            var filteredList = FilterKoi(listKoiDtosResponses);
+            UpdateListView(filteredList);
+        }
+
+        private void ckbAnteiku_UnChecked(object sender, RoutedEventArgs e)
+        {
+            var filteredList = FilterKoi(listKoiDtosResponses);
+            UpdateListView(filteredList);
+        }
+
+        private void ckbAsc_Checked(object sender, RoutedEventArgs e)
+        {
+            ckbDesc.IsChecked = false;
+            var filteredList = FilterKoi(listKoiDtosResponses);
+            UpdateListView(filteredList);
+        }
+
+        private void ckbAsc_Unchecked(object sender, RoutedEventArgs e)
+        {
+            var filteredList = FilterKoi(listKoiDtosResponses);
+            UpdateListView(filteredList);
+        }
+
+        private void ckbDesc_Checked(object sender, RoutedEventArgs e)
+        {
+            ckbAsc.IsChecked = false;
+            var filteredList = FilterKoi(listKoiDtosResponses);
+            UpdateListView(filteredList);
+        }
+
+        private void ckbDesc_Unchecked(object sender, RoutedEventArgs e)
+        {
+            var filteredList = FilterKoi(listKoiDtosResponses);
+            UpdateListView(filteredList);
+        }
+
+        private void ckbDescWeight_Checked(object sender, RoutedEventArgs e)
+        {
+            ckbAscWeight.IsChecked = false;
+            var filteredList = FilterKoi(listKoiDtosResponses);
+            UpdateListView(filteredList);
+        }
+
+        private void ckbAscWeight_Unchecked(object sender, RoutedEventArgs e)
+        {
+            var filteredList = FilterKoi(listKoiDtosResponses);
+            UpdateListView(filteredList);
+        }
+
+        private void ckbDescWeight_Unchecked(object sender, RoutedEventArgs e)
+        {
+            var filteredList = FilterKoi(listKoiDtosResponses);
+            UpdateListView(filteredList);
+        }
+
+        private void ckbAscWeight_Checked(object sender, RoutedEventArgs e)
+        {
+            ckbDescWeight.IsChecked = false;
+            var filteredList = FilterKoi(listKoiDtosResponses);
+            UpdateListView(filteredList);
+        }
+
+        private async void btnFindKois_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var totalKois = await FindKoisInPond(int.Parse(cbxPondNameWithKois.SelectedValue.ToString()));
+
+                if (totalKois <= 0)
+                {
+                    MessageBox.Show("No koi found in this pond", "Empty pond", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                MessageBox.Show($"The total kois in this pond is: {totalKois}",
+                                "Goodbye",
                                 MessageBoxButton.OK,
                                 MessageBoxImage.Information);
             }

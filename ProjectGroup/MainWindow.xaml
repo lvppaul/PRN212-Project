@@ -162,7 +162,7 @@
 
             <!--// Background Image //-->
 
-            <Grid x:Name="BG" PreviewMouseLeftButtonDown="BG_PreviewMouseLeftButtonDown" Grid.ColumnSpan="2">
+            <Grid x:Name="BG" PreviewMouseLeftButtonDown="BG_PreviewMouseLeftButtonDown" Grid.ColumnSpan="2" Margin="1,0,-1,0">
 
                 <Grid.Background>
 
@@ -173,6 +173,12 @@
                 <Rectangle HorizontalAlignment="Left" Height="203" Margin="197,10,0,0" Stroke="#FFF0E5E5" VerticalAlignment="Top" Width="347"/>
                 <Rectangle HorizontalAlignment="Left" Height="312" Margin="202,232,0,0" Stroke="#FFF6EFEF" VerticalAlignment="Top" Width="1288"/>
                 <Rectangle HorizontalAlignment="Left" Height="158" Margin="544,55,0,0" Stroke="#FFF4F1F1" VerticalAlignment="Top" Width="272"/>
+                <Rectangle HorizontalAlignment="Left" Height="45" Margin="544,10,0,0" Stroke="#FFF6EAEA" VerticalAlignment="Top" Width="272"/>
+                <Rectangle HorizontalAlignment="Left" Height="203" Margin="817,10,0,0" Stroke="#FFF6EEEE" VerticalAlignment="Top" Width="293"/>
+                <Rectangle HorizontalAlignment="Left" Height="45" Margin="816,10,0,0" Stroke="#FFF3E9E9" VerticalAlignment="Top" Width="293"/>
+                <Rectangle HorizontalAlignment="Left" Height="1" Margin="816,85,0,0" Stroke="#FFF4EBEB" VerticalAlignment="Top" Width="293"/>
+                <Rectangle HorizontalAlignment="Left" Height="158" Margin="899,55,0,0" Stroke="#FFF7E9E9" VerticalAlignment="Top" Width="1"/>
+                <Rectangle HorizontalAlignment="Left" Height="158" Margin="1014,55,0,0" Stroke="#FFF7E9E9" VerticalAlignment="Top" Width="1"/>
 
             </Grid>
 
@@ -650,6 +656,7 @@
                     </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
+            <Rectangle Grid.Column="1" HorizontalAlignment="Left" Height="158" Margin="159,55,0,0" Stroke="#FFF7ECEC" VerticalAlignment="Top" Width="0"/>
         </Grid>
         <Button x:Name="btnCreate" Content="Create New Koi" HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" Height="50" Margin="214,242,0,0" Click="btnCreate_Click">
             <Button.Template>
@@ -721,5 +728,40 @@
             </Button.Template>
         </Button>
         <TextBlock  HorizontalAlignment="Left" Margin="608,58,0,0" TextWrapping="Wrap" Text="Food Calculate" VerticalAlignment="Top" Foreground="#FFF3E6E6" RenderTransformOrigin="1.509,0.917" Width="148" FontSize="22"/>
+        <Button x:Name="btnFindKois" Content="Koi In pond" HorizontalAlignment="Left" VerticalAlignment="Top" Width="103" Height="28" Margin="707,18,0,0" Click="btnFindKois_Click" >
+            <Button.Template>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="#FFF1F1F1" BorderBrush="#388E3C" BorderThickness="1" CornerRadius="10">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <materialDesign:PackIcon Kind="Search" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,10,0" Width="20" Height="20" Foreground="Black"/>
+                            <ContentPresenter Content="Kois in pond" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
+        <TextBlock  HorizontalAlignment="Left" Margin="921,13,0,0" TextWrapping="Wrap" Text="Filter Kois" VerticalAlignment="Top" Foreground="#FFF3E6E6" RenderTransformOrigin="1.509,0.917" Width="209" FontSize="22"/>
+
+
+        <CheckBox x:Name="ckbHotaru" Content="Hotaro" HorizontalAlignment="Left" Margin="833,91,0,0" VerticalAlignment="Top" Foreground="#FFF1EEEE" Unchecked="ckbHotaru_UnChecked" Checked="ckbHotaru_Checked"/>
+        <CheckBox x:Name="ckbNero" Content="Neru" HorizontalAlignment="Left" Margin="834,112,0,0" VerticalAlignment="Top" Foreground="#FFF1EEEE" Unchecked="ckbNero_UnChecked" Checked="ckbNero_Checked"/>
+        <CheckBox x:Name="ckbYama" Content="Yama" HorizontalAlignment="Left" Margin="837,153,0,0" VerticalAlignment="Top" Foreground="#FFF1EEEE" Unchecked="ckbYama_UnChecked" Checked="ckbYama_Checked"/>
+        <CheckBox x:Name="ckbEitoku" Content="Eitoku" HorizontalAlignment="Left" Margin="835,132,0,0" VerticalAlignment="Top" Foreground="#FFF1EEEE" Unchecked="ckbEitoku_UnChecked" Checked="ckbEitoku_Checked"/>
+        <CheckBox x:Name="ckbAnteiku" Content="Anteiku" HorizontalAlignment="Left" Margin="837,177,0,0" VerticalAlignment="Top" Foreground="#FFF1EEEE" Unchecked="ckbAnteiku_UnChecked" Checked="ckbAnteiku_Checked"/>
+        
+        
+        
+        <TextBlock  HorizontalAlignment="Left" Margin="832,56,0,0" TextWrapping="Wrap" Text="Name" VerticalAlignment="Top" Foreground="#FFF3E6E6" RenderTransformOrigin="1.509,0.917" Width="62" FontSize="22"/>
+        <TextBlock  HorizontalAlignment="Left" Margin="933,56,0,0" TextWrapping="Wrap" Text="Age" VerticalAlignment="Top" Foreground="#FFF3E6E6" RenderTransformOrigin="1.509,0.917" Width="62" FontSize="22"/>
+        <TextBlock  HorizontalAlignment="Left" Margin="1026,56,0,0" TextWrapping="Wrap" Text="Weight" VerticalAlignment="Top" Foreground="#FFF3E6E6" RenderTransformOrigin="1.509,0.917" Width="72" FontSize="22"/>
+        <ComboBox x:Name="cbxPondNameWithKois" HorizontalAlignment="Left" Margin="557,20,0,0" VerticalAlignment="Top" Width="138" RenderTransformOrigin="0.835,0.721"/>
+
+
+        <CheckBox x:Name="ckbAsc" Content="Ascending" HorizontalAlignment="Left" Margin="917,91,0,0" VerticalAlignment="Top" Foreground="#FFF3E2E2" Checked="ckbAsc_Checked" Unchecked="ckbAsc_Unchecked"/>
+        <CheckBox x:Name="ckbDesc" Content="Descending" HorizontalAlignment="Left" Margin="917,115,0,0" VerticalAlignment="Top" Foreground="#FFF3E2E2" Checked="ckbDesc_Checked" Unchecked="ckbDesc_Unchecked"/>
+
+        <CheckBox x:Name="ckbAscWeight" Content="Ascending" HorizontalAlignment="Left" Margin="1026,91,0,0" VerticalAlignment="Top" Foreground="#FFF3E2E2" Checked="ckbAscWeight_Checked" Unchecked="ckbAscWeight_Unchecked"/>
+        <CheckBox x:Name="ckbDescWeight" Content="Descending" HorizontalAlignment="Left" Margin="1026,115,0,0" VerticalAlignment="Top" Foreground="#FFF3E2E2" Checked="ckbDescWeight_Checked" Unchecked="ckbDescWeight_Unchecked"/>
+
     </Grid>
 </Window>
